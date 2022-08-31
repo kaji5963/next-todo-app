@@ -1,20 +1,19 @@
 import Head from "next/head";
 import Link from "next/link";
 import { auth } from "./components/firebase";
+import Header from "./components/Header";
+import Layout from "./components/Layout";
 
 const Top = () => {
   return (
     <>
+    <Layout>
       <Head>
         <title>Top Page</title>
       </Head>
-      <div className="text-center text-5xl font-extrabold leading-none tracking-tight">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-green-300">
-          Welcome to Todo App
-        </span>
-      </div>
-      <div>
-        <div className="flex justify-center mt-4 mb-2">
+      
+      <div className="font-serif">
+        <div className="flex justify-center mt-4 mb-2 ">
           <button className="m-4 bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">
             追加
           </button>
@@ -66,6 +65,7 @@ const Top = () => {
           </button>
         </div>
       </div>
+      </Layout>
     </>
   );
 };

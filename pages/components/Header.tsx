@@ -1,8 +1,8 @@
 const Header = () => {
   return (
-    <header>
+    <header className="m-0">
       <div className="h-20 flex justify-around items-center container mx-auto w-full text-center font-extrabold leading-none tracking-tight">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-green-300 text-5xl">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-400 to-gray-300 text-5xl">
           Welcome to Todo App
         </span>
       </div>

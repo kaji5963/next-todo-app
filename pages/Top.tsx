@@ -3,17 +3,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { auth } from "./components/firebase";
 import Layout from "./components/Layout";
-import todoList from "./components/atom";
-import { useRecoilState } from "recoil";
-
-type todoList = {
-  id: string;
-  inputValue: string;
-  date: string;
-};
+import taskList from "./components/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const Top = () => {
-  const [todo, setTodo] = useRecoilState<any>(todoList);
+  // const [task, setTask] = useRecoilState<any>(taskList);
+  const task = useRecoilValue<any>(taskList);
   const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
@@ -65,61 +60,30 @@ const Top = () => {
             </thead>
             {isClient && (
               <tbody>
-                <tr className="h-12">
-                  <td className="border border-slate-600">散歩をする</td>
-                  <td className="border border-slate-600 cursor-pointer hover:bg-yellow-200">
-                    進行中
-                  </td>
-                  <td className="border border-slate-600">2022/8/30</td>
+                {task.map((todo: any) => {
+                  return (
+                    <tr className="h-12" key={todo.id}>
+                      <td className="border border-slate-600">{todo.title}</td>
+                      <td className="border border-slate-600 cursor-pointer hover:bg-yellow-200">
+                        {todo.category}
+                      </td>
+                      <td className="border border-slate-600">{todo.date}</td>
 
-                  <td
-                    className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                    onClick={s}
-                  >
-                    編集
-                  </td>
-                  <td
-                    className="m-4 bg-red-400 hover:bg-red-500 active:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                    onClick={s}
-                  >
-                    削除
-                  </td>
-                </tr>
-                <tr className="h-12">
-                  <td className="border border-slate-600">散歩をする</td>
-                  <td className="border border-slate-600">進行中</td>
-                  <td className="border border-slate-600">2022/8/30</td>
-                  <td
-                    className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                    onClick={s}
-                  >
-                    編集
-                  </td>
-                  <td
-                    className="m-4 bg-red-400 hover:bg-red-500 active:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                    onClick={s}
-                  >
-                    削除
-                  </td>
-                </tr>
-
-                <tr className="h-12">
-                  <td className="border border-slate-600">散歩をする</td>
-                  <td className="border border-slate-600">進行中</td>
-                  <td className="border border-slate-600">2022/8/30</td>
-                  <td
-                    className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                    onClick={s}
-                  >
-                    編集
-                  </td>
-                  <td
-                    className="m-4 bg-red-400 hover:bg-red-500 active:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                    onClick={s}
-                  >
-                    削除
-                  </td>
-                </tr>
+                      <td
+                        className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                        onClick={s}
+                      >
+                        編集
+                      </td>
+                      <td
+                        className="m-4 bg-red-400 hover:bg-red-500 active:bg-red-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                        onClick={s}
+                      >
+                        削除
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             )}
           </table>

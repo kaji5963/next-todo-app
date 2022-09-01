@@ -1,8 +1,15 @@
 import { atom } from "recoil";
+import { recoilPersist } from "recoil-persist";
 
-const todoList = atom({
-    key: "todo",
-    default: []
+const { persistAtom } = recoilPersist({
+	key: "recoil-persist",
+	storage: typeof window === "undefined" ? undefined : sessionStorage
 });
 
-export default todoList
+const taskList = atom({
+    key: "task",
+    default: [],
+    effects_UNSTABLE: [persistAtom]
+});
+
+export default taskList

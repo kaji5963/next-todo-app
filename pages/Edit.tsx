@@ -57,9 +57,9 @@ const Edit = () => {
     <>
     <Layout>
       <Head>
-        <title>Create Page</title>
+        <title>Edit Page</title>
       </Head>
-      <div className="mt-14  h-auto w-full mx-auto container bg-green-200 flex justify-center items-start text-base rounded-lg">
+      <div className="mt-14  h-auto w-full mx-auto container bg-orange-200 flex justify-center items-start text-base rounded-lg">
         <form
           className="flex flex-col w-full"
           onSubmit={handleSubmit(onSubmit)}
@@ -101,7 +101,7 @@ const Edit = () => {
             {...register("detail")}
           />
           <button
-            className="m-auto mb-10 w-32 bg-red-400 hover:bg-red-500 text-white font-bold py-2 px-4 rounded active:bg-red-600"
+            className="m-auto mb-10 w-32 bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded active:bg-green-600"
             type="submit"
           >
             編集

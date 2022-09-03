@@ -78,7 +78,7 @@ const Top = () => {
         <Head>
           <title>Top Page</title>
         </Head>
-        <div className="flex justify-end items-center mr-10">
+        <div className="h-full flex justify-end items-center mr-10">
           <button
             className="text-xs w-1/8 m-4 bg-blue-400 hover:bg-blue-500 active:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleLogout}
@@ -169,7 +169,7 @@ const Top = () => {
           </table>
           <div>
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-              <p >{task.title}</p>
+              <p >{`${task.detail}text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text `}</p>
             </Modal>
           </div>
         </div>

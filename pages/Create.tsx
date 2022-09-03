@@ -5,6 +5,10 @@ import taskList from "./components/atom";
 import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { db } from "./components/firebase"
+import { collection, addDoc } from "firebase/firestore";
+
+
 
 type List = {
   id: string;
@@ -50,6 +54,14 @@ const Create = () => {
     router.push("/Top");
   };
 
+  const docRef = addDoc(collection(db, "post"),{
+    // id: Math.floor(Math.random() * 1000).toString(16),
+    title: "",
+    date: "",
+    detail: "",
+    category:"",
+  })
+
   return (
     <Layout>
       <Head>
@@ -94,17 +106,23 @@ const Create = () => {
             placeholder="詳細を入力してください"
             {...register("detail")}
           />
-          <button
-            className="m-auto mb-10 w-32 bg-indigo-400 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded active:bg-indigo-600"
-            type="submit"
-          >
-            追加
-          </button>
+          <div className="flex justify-center">
+            <button
+              className="mr-10 mb-10 w-32 bg-indigo-400 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded active:bg-indigo-600"
+              type="submit"
+            >
+              追加
+            </button>
+            <button
+              className="ml-10 mb-10 w-32 bg-indigo-300 hover:bg-indigo-400 text-white font-bold py-2 px-4 rounded active:bg-indigo-500"
+              type="button"
+              onClick={() => router.push("/Top")}
+            >
+              戻る
+            </button>
+          </div>
         </form>
       </div>
-      <Link href="/Top">
-        <a>back</a>
-      </Link>
     </Layout>
   );
 };

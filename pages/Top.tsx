@@ -5,13 +5,15 @@ import { auth } from "./components/firebase";
 import Layout from "./components/Layout";
 import taskList from "./components/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
+import Modal from "./components/Modal";
 
 const Top = () => {
-  const [ editValue, setEditValue] = useState()
+  const [editValue, setEditValue] = useState();
   const [task, setTask] = useRecoilState<any>(taskList);
   // const task = useRecoilValue<any>(taskList);
   const [isClient, setIsClient] = useState(false);
   const [filterTask, setFilterTask] = useState("");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const router = useRouter();
   //ReactDOM.hydrate()対策
@@ -56,10 +58,18 @@ const Top = () => {
     category: string
   ) => {
     const editTask = task.map((task: any) => {
-      task.id === id ? {...task, title: title, date: date, detail: detail, category: category} : task
-    })
+      task.id === id
+        ? {
+            ...task,
+            title: title,
+            date: date,
+            detail: detail,
+            category: category,
+          }
+        : task;
+    });
     // setTask(editTask)
-    router.push("/Edit", editTask)
+    router.push("/Edit", editTask);
   };
 
   return (
@@ -103,6 +113,7 @@ const Top = () => {
                 <th className="border border-slate-600 w-auto">タスク</th>
                 <th className="border border-slate-600 w-1/6">進行状態</th>
                 <th className="border border-slate-600 w-1/6">期限</th>
+                <th className="border border-slate-600 w-1/12">詳細</th>
                 <th className="border border-slate-600 w-1/12">編集</th>
                 <th className="border border-slate-600 w-1/12">削除</th>
               </tr>
@@ -119,11 +130,17 @@ const Top = () => {
                   return (
                     <tr className="h-12" key={task.id}>
                       <td className="border border-slate-600">{task.title}</td>
+
                       <td className="border border-slate-600">
                         {task.category}
                       </td>
                       <td className="border border-slate-600">{task.date}</td>
-
+                      <td
+                        className="m-4 text-white font-bold py-2 px-4 rounded cursor-pointer bg-sky-300 hover:bg-sky-500 active:bg-sky-700"
+                        onClick={() => setIsOpen(true)}
+                      >
+                        詳細
+                      </td>
                       <td
                         className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
                         onClick={() =>
@@ -133,7 +150,7 @@ const Top = () => {
                             task.date,
                             task.detail,
                             task.category
-                          ) 
+                          )
                         }
                       >
                         編集
@@ -150,8 +167,12 @@ const Top = () => {
               </tbody>
             )}
           </table>
+          <div>
+            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+              <p >{task.title}</p>
+            </Modal>
+          </div>
         </div>
-        <div></div>
       </Layout>
     </>
   );

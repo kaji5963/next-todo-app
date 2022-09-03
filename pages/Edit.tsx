@@ -1,4 +1,4 @@
-import Link from "next/link";
+
 import Layout from "./components/Layout";
 import Head from "next/head";
 import taskList from "./components/atom";
@@ -21,9 +21,12 @@ type FormData = {
   category: string;
 };
 
-const Create = () => {
+const Edit = () => {
+
   const [task, setTask] = useRecoilState<any>(taskList);
   const router = useRouter();
+  console.log(task);
+  
   //useForm処理
   const {
     register,
@@ -51,11 +54,12 @@ const Create = () => {
   };
 
   return (
+    <>
     <Layout>
       <Head>
         <title>Create Page</title>
       </Head>
-      <div className="mt-14  h-auto w-full mx-auto container bg-blue-200 flex justify-center items-start text-base rounded-lg">
+      <div className="mt-14  h-auto w-full mx-auto container bg-green-200 flex justify-center items-start text-base rounded-lg">
         <form
           className="flex flex-col w-full"
           onSubmit={handleSubmit(onSubmit)}
@@ -69,14 +73,16 @@ const Create = () => {
           <input
             className="w-1/2 h-14 m-14 mx-auto container text-center rounded-lg border-solid outline-none"
             type="text"
-            placeholder="タスクを入力してください"
+            placeholder="タスクを編集してください"
             {...register("title", { required: "true" })}
+            value={task.title}
           />
           <div className="flex justify-center items-center mx-auto h-8 container">
             <select
               className="w-1/5 h-10 mt-14 mb-14 mx-16 container text-center rounded-lg border-solid outline-none"
               placeholder="--------"
               {...register("category")}
+
             >
               <option value="未着手">未着手</option>
               <option value="進行中">進行中</option>
@@ -91,22 +97,21 @@ const Create = () => {
           <input
             className="w-1/2 h-28 m-14 mx-auto container text-center rounded-lg border-solid outline-none"
             type="textarea"
-            placeholder="詳細を入力してください"
+            placeholder="詳細を編集してください"
             {...register("detail")}
           />
           <button
-            className="m-auto mb-10 w-32 bg-indigo-400 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded active:bg-indigo-600"
+            className="m-auto mb-10 w-32 bg-red-400 hover:bg-red-500 text-white font-bold py-2 px-4 rounded active:bg-red-600"
             type="submit"
           >
-            追加
+            編集
           </button>
         </form>
       </div>
-      <Link href="/Top">
-        <a>back</a>
-      </Link>
     </Layout>
+      <button onClick={() => router.push("/Top")}>back</button>
+    </>
   );
 };
 
-export default Create;
+export default Edit;

@@ -5,7 +5,6 @@ import { auth } from "./components/firebase";
 import Layout from "./components/Layout";
 import taskList from "./components/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { toUnicode } from "punycode";
 
 const Top = () => {
   const [task, setTask] = useRecoilState<any>(taskList);
@@ -24,9 +23,24 @@ const Top = () => {
   };
   //削除処理
   const handleDelete = (id: string) => {
-    const deleteTask = task.filter((task: { id: string; }) => task.id !== id)
-    setTask(deleteTask)
+    const deleteTask = task.filter((task: { id: string }) => task.id !== id);
+    setTask(deleteTask);
   };
+  //編集ページへルーティング
+  // const handleEdit = (
+  //   id: string,
+  //   title: string,
+  //   date: string,
+  //   detail: string,
+  //   category: string
+  // ) => {
+  //   console.log(task);
+  //   const editTask = task.map((task: { id: string; }) => {
+  //     task.id === id ? {...task, title: title, date: date, detail: detail, category: category} : task
+  //     setTask(editTask)
+  //   })
+  //   router.push("/Edit")
+  // };
 
   return (
     <>
@@ -75,6 +89,15 @@ const Top = () => {
 
                       <td
                         className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                        // onClick={() =>
+                        //   handleEdit(
+                        //     task.id,
+                        //     task.title,
+                        //     task.date,
+                        //     task.detail,
+                        //     task.category
+                        //   )
+                        // }
                       >
                         編集
                       </td>

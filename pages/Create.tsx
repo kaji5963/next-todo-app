@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Layout from "./components/Layout";
 import Head from "next/head";
 import taskList from "./components/atom";
@@ -8,13 +7,13 @@ import { useRouter } from "next/router";
 import { db } from "./components/firebase"
 import { collection, addDoc } from "firebase/firestore";
 import { FormEvent, useState } from "react";
-
+import { format } from "date-fns"
 
 
 type List = {
-  id: string;
+  key: string,
   title: string;
-  date: string;
+  createdAt: string;
   detail: string;
   category: string;
 };
@@ -28,9 +27,9 @@ type List = {
 
 const Create = () => {
   const [formValue, setFormValue] = useState<List>({
-    id: Math.floor(Math.random() * 1000).toString(16),
+    key: Math.floor(Math.random() * 1000).toString(16),
     title: "",
-    date: "",
+    createdAt: format(new Date, 'yyyy/MM/dd'),
     detail: "",
     category: "未着手",
   });
@@ -63,30 +62,30 @@ const Create = () => {
   //   ]);
   //   router.push("/Top");
   // };
-
+  //firebaseへデータ格納、form初期化処理、Topへ送信処理
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(formValue.title === "") return
     addDoc(collection(db, "post"), {
-      id: Math.floor(Math.random() * 1000).toString(16),
+      key: formValue.key,
       title: formValue.title,
-      date: formValue.date,
+      createdAt: formValue.createdAt,
       detail: formValue.detail,
       category: formValue.category,
     });
     setFormValue({
-      id: Math.floor(Math.random() * 1000).toString(16),
+      key: Math.floor(Math.random() * 1000).toString(16),
       title: "",
-      date: "",
+      createdAt: format(new Date, 'yyyy/MM/dd'),
       detail: "",
       category: "未着手",
     });
     setTask((task: Array<List>) => [
       ...task,
       {
-        id: Math.floor(Math.random() * 1000).toString(16),
+        key: formValue.key,
         title: formValue.title,
-        date: formValue.date,
+        createdAt: formValue.createdAt,
         detail: formValue.detail,
         category: formValue.category,
       },
@@ -144,10 +143,10 @@ const Create = () => {
             </select>
             <input
               className="w-1/5 h-10 mt-14 mb-14 mx-16 container text-center rounded-lg border-solid outline-none"
-              type="date"
-              value={formValue.date}
+              type="text"
+              value={formValue.createdAt}
               onChange={(e) =>
-                setFormValue({ ...formValue, date: e.target.value })
+                setFormValue({ ...formValue, createdAt: e.target.value })
               }
               // {...register("date")}
             />

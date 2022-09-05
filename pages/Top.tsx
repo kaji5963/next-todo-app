@@ -6,6 +6,8 @@ import Layout from "./components/Layout";
 import taskList from "./components/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Modal from "./components/Modal";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { db } from "./components/firebase";
 
 const Top = () => {
   const [editValue, setEditValue] = useState();
@@ -14,19 +16,30 @@ const Top = () => {
   const [isClient, setIsClient] = useState(false);
   const [filterTask, setFilterTask] = useState("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const router = useRouter();
+
+  //firebaseからデータを取得しsetTaskで更新しtaskに格納
+  useEffect(() => {
+    const postData = collection(db, "post");
+    getDocs(postData).then((snapshot) => {
+      setTask(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+  }, []);
+
   //ReactDOM.hydrate()対策
   useEffect(() => {
     setIsClient(true);
   }, []);
+
   //ログアウト処理
   const handleLogout = () => {
     auth.signOut();
     router.push("/");
   };
+
   //削除処理
   const handleDelete = (id: string) => {
+    deleteDoc(doc(db, "post", id));
     const deleteTask = task.filter((task: { id: string }) => task.id !== id);
     setTask(deleteTask);
   };
@@ -50,26 +63,28 @@ const Top = () => {
   };
 
   //編集ページへルーティング
-  const handleEdit = (
-    id: string,
-    title: string,
-    date: string,
-    detail: string,
-    category: string
-  ) => {
+  const handleEdit = (id: string) => {
     const editTask = task.map((task: any) => {
-      task.id === id
-        ? {
-            ...task,
-            title: title,
-            date: date,
-            detail: detail,
-            category: category,
-          }
-        : task;
+      task.id === id && router.push("/Edit")
+      // if ( task.id === id ) {
+      //   task.title = title
+      //   task.createdAt = createdAt
+      //   task.detail = detail
+      //   task.category = category
+      // }
+      // return task
+      // task.id === id
+      //   ? {
+      //       ...task,
+      //       title: task.title,
+      //       createdAt: task.createdAt,
+      //       detail: task.detail,
+      //       category: task.category,
+      //     }
+      //   : task;
     });
-    // setTask(editTask)
-    router.push("/Edit", editTask);
+    // setTask(editTask);
+    // router.push("/Edit");
   };
 
   return (
@@ -112,7 +127,7 @@ const Top = () => {
               <tr className="bg-gray-300 h-16 w-1/2">
                 <th className="border border-slate-600 w-auto">タスク</th>
                 <th className="border border-slate-600 w-1/6">進行状態</th>
-                <th className="border border-slate-600 w-1/6">期限</th>
+                <th className="border border-slate-600 w-1/6">作成日</th>
                 <th className="border border-slate-600 w-1/12">詳細</th>
                 <th className="border border-slate-600 w-1/12">編集</th>
                 <th className="border border-slate-600 w-1/12">削除</th>
@@ -128,13 +143,15 @@ const Top = () => {
                   if (filterTask === "完了" && task.category !== "完了") return;
 
                   return (
-                    <tr className="h-12" key={task.id}>
+                    <tr className="h-12" key={task.key}>
                       <td className="border border-slate-600">{task.title}</td>
 
                       <td className="border border-slate-600">
                         {task.category}
                       </td>
-                      <td className="border border-slate-600">{task.date}</td>
+                      <td className="border border-slate-600">
+                        {task.createdAt}
+                      </td>
                       <td
                         className="m-4 text-white font-bold py-2 px-4 rounded cursor-pointer bg-sky-300 hover:bg-sky-500 active:bg-sky-700"
                         onClick={() => setIsOpen(true)}
@@ -146,10 +163,10 @@ const Top = () => {
                         onClick={() =>
                           handleEdit(
                             task.id,
-                            task.title,
-                            task.date,
-                            task.detail,
-                            task.category
+                            // task.title,
+                            // task.createdAt,
+                            // task.detail,
+                            // task.category
                           )
                         }
                       >
@@ -169,7 +186,7 @@ const Top = () => {
           </table>
           <div>
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-              <p >{`${task.detail}text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text `}</p>
+              <p>{`${task.detail}text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text `}</p>
             </Modal>
           </div>
         </div>

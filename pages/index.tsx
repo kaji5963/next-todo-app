@@ -29,7 +29,6 @@ import { FormEvent, useState } from "react";
 const Home: NextPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const router = useRouter();
 
   //email、passwordサインアップ処理

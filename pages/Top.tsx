@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import { auth } from "./components/firebase";
 import Layout from "./components/Layout";
 import {taskList, editList} from "./components/atom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import Modal from "./components/Modal";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { useRecoilState } from "recoil";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "./components/firebase";
 
 const Top = () => {
@@ -14,13 +20,12 @@ const Top = () => {
   const [editTask, setEditTask] = useRecoilState<any>(editList);
   const [isClient, setIsClient] = useState(false);
   const [filterTask, setFilterTask] = useState("");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const router = useRouter();
 
   //firebaseからデータを取得しsetTaskで更新しtaskに格納(taskを監視)
   useEffect(() => {
     const postData = collection(db, "post");
-    getDocs(postData).then((snapshot) => {
+    getDocs(query(postData, orderBy("timeStamp", "desc"))).then((snapshot) => {
       setTask(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
   }, [task]);
@@ -61,24 +66,33 @@ const Top = () => {
     }
   };
 
-  //編集ページへデータを渡しルーティング
+  //編集ページへデータを渡し遷移
   const handleEdit = (
     id: string,
     key: string,
     title: string,
     createdAt: String,
     detail: string,
-    category: string,
-    ) => {
-      setEditTask({
-        id,
-        key,
-        title,
-        createdAt,
-        detail,
-        category,
-      });
+    category: string
+  ) => {
+    setEditTask({
+      id,
+      key,
+      title,
+      createdAt,
+      detail,
+      category,
+    });
+
     router.push("/Edit");
+  };
+
+  //詳細ページへデータを渡し遷移
+  const handleDetail = (detail: string) => {
+    setEditTask({
+      detail,
+    });
+    router.push("/Detail");
   };
 
   return (
@@ -151,7 +165,7 @@ const Top = () => {
                       </td>
                       <td
                         className="m-4 text-white font-bold py-2 px-4 rounded cursor-pointer bg-sky-300 hover:bg-sky-500 active:bg-sky-700"
-                        onClick={() => setIsOpen(true)}
+                        onClick={() => handleDetail(task.detail)}
                       >
                         詳細
                       </td>
@@ -182,15 +196,10 @@ const Top = () => {
               </tbody>
             )}
           </table>
-          <div>
-            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-              <p>{task.detail}</p>
-            </Modal>
-          </div>
         </div>
       </Layout>
     </>
   );
-};;;
+};;;;
 
 export default Top;

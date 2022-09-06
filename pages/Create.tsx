@@ -5,13 +5,19 @@ import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 // import { useForm, SubmitHandler } from "react-hook-form";
 import { db } from "./components/firebase"
-import { collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { FormEvent, useState } from "react";
-import { format } from "date-fns"
+import { format } from "date-fns";
 
+//コメントアウト部分はuseFormのコード、formやバリデーションは上手く機能したがfirebaseと連携できず、再度チャレンジするため残しておく
 
+//formのデータの型
 type List = {
-  key: string,
+  key: string;
   title: string;
   createdAt: string;
   detail: string;
@@ -29,7 +35,7 @@ const Create = () => {
   const [formValue, setFormValue] = useState<List>({
     key: Math.floor(Math.random() * 1000).toString(16),
     title: "",
-    createdAt: format(new Date, 'yyyy/MM/dd'),
+    createdAt: format(new Date(), "yyyy/MM/dd"),
     detail: "",
     category: "未着手",
   });
@@ -62,23 +68,18 @@ const Create = () => {
   //   ]);
   //   router.push("/Top");
   // };
-  //firebaseへデータ格納、form初期化処理、Topへ送信処理
+
+  //firebaseへデータ格納、Topへ送信処理
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(formValue.title === "") return
+    if (formValue.title === "") return;
     addDoc(collection(db, "post"), {
       key: formValue.key,
       title: formValue.title,
       createdAt: formValue.createdAt,
       detail: formValue.detail,
       category: formValue.category,
-    });
-    setFormValue({
-      key: Math.floor(Math.random() * 1000).toString(16),
-      title: "",
-      createdAt: format(new Date, 'yyyy/MM/dd'),
-      detail: "",
-      category: "未着手",
+      timeStamp: serverTimestamp(),
     });
     setTask((task: Array<List>) => [
       ...task,

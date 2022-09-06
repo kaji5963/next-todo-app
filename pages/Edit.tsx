@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Layout from "./components/Layout";
-import { taskList, editList } from "./components/atom";
+import { editList } from "./components/atom";
 import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 import { FormEvent } from "react";
@@ -8,10 +8,9 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "./components/firebase";
 
 const Edit = () => {
-  const [task, setTask] = useRecoilState<any>(taskList);
   const [editTask, setEditTask] = useRecoilState<any>(editList);
+
   const router = useRouter();
-  
   //firebaseのデータ更新処理
   const handleUpdateSubmit = (e: FormEvent<HTMLFormElement>, id: string) => {
     if (editTask.title === "") return;

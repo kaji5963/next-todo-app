@@ -10,10 +10,11 @@ import { db } from "./components/firebase";
 const Edit = () => {
   const [task, setTask] = useRecoilState<any>(taskList);
   const [editTask, setEditTask] = useRecoilState<any>(editList);
-
   const router = useRouter();
+  
   //firebaseのデータ更新処理
   const handleUpdateSubmit = (e: FormEvent<HTMLFormElement>, id: string) => {
+    if (editTask.title === "") return;
     e.preventDefault();
     const newUpdateDoc = doc(db, "post", id);
     updateDoc(newUpdateDoc, {

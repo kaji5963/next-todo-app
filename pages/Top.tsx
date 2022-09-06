@@ -88,13 +88,14 @@ const Top = () => {
           <title>Top Page</title>
         </Head>
         <div className="h-full flex justify-end items-center mr-10">
+          {auth.currentUser ? <p>ログイン名：{auth.currentUser?.displayName} </p> : <p>ログイン名：ゲスト</p> }
           <button
             className="text-xs w-1/8 m-4 bg-blue-400 hover:bg-blue-500 active:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleLogout}
           >
             ログアウト
           </button>
-          <p>ログイン名：{auth.currentUser?.displayName} </p>
+          
         </div>
         <div className="font-serif">
           <div className="flex justify-center mt-4 mb-2">
@@ -127,8 +128,6 @@ const Top = () => {
                 <th className="border border-slate-600 w-1/12">削除</th>
               </tr>
             </thead>
-      
-            {/* ----------------------------------------------------- */}
 
             {isClient && (
               <tbody>
@@ -184,7 +183,7 @@ const Top = () => {
           </table>
           <div>
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-              <p>{`${task.detail}text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text `}</p>
+              <p>{task.detail}</p>
             </Modal>
           </div>
         </div>

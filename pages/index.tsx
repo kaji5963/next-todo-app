@@ -84,12 +84,12 @@ const Home: NextPage = () => {
                 </Button>
               </Stack>
             </form>
-            <Button className="mt-5"
+            <Button className="mt-10" 
               borderRadius={0}
               type="submit"
               variant="solid"
               colorScheme="teal"
-              width="full"
+              width=""
               onClick={signInWithGoogle}
             >
               Googleログイン

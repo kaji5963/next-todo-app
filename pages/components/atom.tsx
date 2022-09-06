@@ -6,10 +6,14 @@ const { persistAtom } = recoilPersist({
 	storage: typeof window === "undefined" ? undefined : sessionStorage
 });
 
-const taskList = atom({
+export const taskList = atom({
     key: "task",
     default: [],
     effects_UNSTABLE: [persistAtom]
 });
 
-export default taskList
+export const editList = atom({
+    key: "edit",
+    default: {},
+    effects_UNSTABLE: [persistAtom]
+});

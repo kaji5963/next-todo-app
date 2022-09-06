@@ -1,6 +1,6 @@
 import Layout from "./components/Layout";
 import Head from "next/head";
-import taskList from "./components/atom";
+import {taskList} from "./components/atom";
 import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 // import { useForm, SubmitHandler } from "react-hook-form";
@@ -117,10 +117,10 @@ const Create = () => {
               タスクは必須です！入力してください！
             </span>
           )} */}
-
           <input
             className="w-1/2 h-14 m-14 mx-auto container text-center rounded-lg border-solid outline-none"
             type="text"
+            name="task"
             placeholder="タスクを入力してください"
             value={formValue.title}
             onChange={(e) =>

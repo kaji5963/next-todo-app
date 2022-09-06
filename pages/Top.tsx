@@ -3,28 +3,27 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { auth } from "./components/firebase";
 import Layout from "./components/Layout";
-import taskList from "./components/atom";
+import {taskList, editList} from "./components/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Modal from "./components/Modal";
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { db } from "./components/firebase";
 
 const Top = () => {
-  const [editValue, setEditValue] = useState();
   const [task, setTask] = useRecoilState<any>(taskList);
-  // const task = useRecoilValue<any>(taskList);
+  const [editTask, setEditTask] = useRecoilState<any>(editList);
   const [isClient, setIsClient] = useState(false);
   const [filterTask, setFilterTask] = useState("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const router = useRouter();
 
-  //firebaseからデータを取得しsetTaskで更新しtaskに格納
+  //firebaseからデータを取得しsetTaskで更新しtaskに格納(taskを監視)
   useEffect(() => {
     const postData = collection(db, "post");
     getDocs(postData).then((snapshot) => {
       setTask(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
-  }, []);
+  }, [task]);
 
   //ReactDOM.hydrate()対策
   useEffect(() => {
@@ -62,29 +61,24 @@ const Top = () => {
     }
   };
 
-  //編集ページへルーティング
-  const handleEdit = (id: string) => {
-    const editTask = task.map((task: any) => {
-      task.id === id && router.push("/Edit")
-      // if ( task.id === id ) {
-      //   task.title = title
-      //   task.createdAt = createdAt
-      //   task.detail = detail
-      //   task.category = category
-      // }
-      // return task
-      // task.id === id
-      //   ? {
-      //       ...task,
-      //       title: task.title,
-      //       createdAt: task.createdAt,
-      //       detail: task.detail,
-      //       category: task.category,
-      //     }
-      //   : task;
-    });
-    // setTask(editTask);
-    // router.push("/Edit");
+  //編集ページへデータを渡しルーティング
+  const handleEdit = (
+    id: string,
+    key: string,
+    title: string,
+    createdAt: String,
+    detail: string,
+    category: string,
+    ) => {
+      setEditTask({
+        id,
+        key,
+        title,
+        createdAt,
+        detail,
+        category,
+      });
+    router.push("/Edit");
   };
 
   return (
@@ -133,6 +127,9 @@ const Top = () => {
                 <th className="border border-slate-600 w-1/12">削除</th>
               </tr>
             </thead>
+      
+            {/* ----------------------------------------------------- */}
+
             {isClient && (
               <tbody>
                 {task.map((task: any) => {
@@ -163,10 +160,11 @@ const Top = () => {
                         onClick={() =>
                           handleEdit(
                             task.id,
-                            // task.title,
-                            // task.createdAt,
-                            // task.detail,
-                            // task.category
+                            task.key,
+                            task.title,
+                            task.createdAt,
+                            task.detail,
+                            task.category,
                           )
                         }
                       >

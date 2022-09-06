@@ -88,14 +88,15 @@ const Top = () => {
           <title>Top Page</title>
         </Head>
         <div className="h-full flex justify-end items-center mr-10">
-          {auth.currentUser ? <p>ログイン名：{auth.currentUser?.displayName} </p> : <p>ログイン名：ゲスト</p> }
+          {auth.currentUser && (
+            <p>ログイン名：{auth.currentUser?.displayName} </p>
+          )}
           <button
             className="text-xs w-1/8 m-4 bg-blue-400 hover:bg-blue-500 active:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleLogout}
           >
             ログアウト
           </button>
-          
         </div>
         <div className="font-serif">
           <div className="flex justify-center mt-4 mb-2">
@@ -163,7 +164,7 @@ const Top = () => {
                             task.title,
                             task.createdAt,
                             task.detail,
-                            task.category,
+                            task.category
                           )
                         }
                       >

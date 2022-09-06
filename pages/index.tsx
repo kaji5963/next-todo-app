@@ -1,5 +1,11 @@
 import type { NextPage } from 'next'
+import Head from "next/head";
 import { useRouter } from "next/router";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import {
   Flex,
   Heading,
@@ -18,10 +24,42 @@ const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 import { auth, provider } from "./components/firebase";
 import { signInWithPopup } from "firebase/auth";
+import { FormEvent, useState } from "react";
 
 const Home: NextPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const router = useRouter();
 
+  //email、passwordサインアップ処理
+  const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        router.push("/Top");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  //email、passwordサインイン処理
+  const handleLogin = () => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        router.push("/Top");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  //Googleログイン処理
   const signInWithGoogle = async () => {
     await signInWithPopup(auth, provider);
     await router.push("/Top");
@@ -29,6 +67,9 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>auth Page</title>
+      </Head>
       <Flex
         flexDirection="column"
         width="100wh"
@@ -46,7 +87,7 @@ const Home: NextPage = () => {
           <Avatar bg="teal.500" />
           <Heading color="teal.400">Welcome</Heading>
           <Box minW={{ base: "90%", md: "468px" }}>
-            <form>
+            <form onSubmit={(e) => handleSignUp(e)}>
               <Stack
                 spacing={4}
                 p="1rem"
@@ -59,7 +100,12 @@ const Home: NextPage = () => {
                       pointerEvents="none"
                       children={<CFaUserAlt color="gray.300" />}
                     />
-                    <Input type="email" placeholder="email address" />
+                    <Input
+                      type="email"
+                      placeholder="email address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </InputGroup>
                 </FormControl>
                 <FormControl>
@@ -69,7 +115,11 @@ const Home: NextPage = () => {
                       color="gray.300"
                       children={<CFaLock color="gray.300" />}
                     />
-                    <Input placeholder="Password" />
+                    <Input
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
                   </InputGroup>
                 </FormControl>
                 <Button
@@ -78,18 +128,31 @@ const Home: NextPage = () => {
                   variant="solid"
                   colorScheme="teal"
                   width="full"
-                  onClick={() => router.push("/Top")}
                 >
-                  ログイン
+                  新規登録
                 </Button>
               </Stack>
             </form>
-            <Button className="mt-10" 
+            <Button
+              mx="4"
+              className="mt-10"
               borderRadius={0}
               type="submit"
               variant="solid"
               colorScheme="teal"
-              width=""
+              width="220px"
+              onClick={handleLogin}
+            >
+              ログイン
+            </Button>
+            <Button
+              mx="4"
+              className="mt-10"
+              borderRadius={0}
+              type="submit"
+              variant="solid"
+              colorScheme="teal"
+              width="220px"
               onClick={signInWithGoogle}
             >
               Googleログイン
@@ -99,6 +162,6 @@ const Home: NextPage = () => {
       </Flex>
     </>
   );
-}
+};
 
 export default Home

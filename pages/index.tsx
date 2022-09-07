@@ -34,7 +34,6 @@ const Home: NextPage = () => {
   //email、passwordサインアップ処理
   const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
@@ -47,8 +46,7 @@ const Home: NextPage = () => {
 
   //email、passwordサインイン処理
   const handleLogin = () => {
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(getAuth(), email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         router.push("/Top");
@@ -97,8 +95,8 @@ const Home: NextPage = () => {
                   <InputGroup>
                     <InputLeftElement
                       pointerEvents="none"
-                      children={<CFaUserAlt color="gray.300" />}
-                    />
+                      // children={<CFaUserAlt color="gray.300" />}
+                    >{<CFaUserAlt color="gray.300" />}</InputLeftElement>
                     <Input
                       type="email"
                       placeholder="email address"

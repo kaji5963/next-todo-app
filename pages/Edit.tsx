@@ -31,7 +31,8 @@ const Edit = () => {
         <Head>
           <title>Edit Page</title>
         </Head>
-        <div className="mt-14  h-auto w-full mx-auto container bg-orange-200 flex justify-center items-start text-base rounded-lg">
+        <h1 className="text-center mt-10 bg-clip-text text-transparent bg-gradient-to-r from-gray-400 to-gray-300 text-xl">タスク編集</h1>
+        <div className="mt-4  h-auto w-full mx-auto container bg-orange-200 flex justify-center items-start text-base rounded-lg">
           <form
             className="flex flex-col w-full"
             onSubmit={(e) => handleUpdateSubmit(e, editTask.id)}

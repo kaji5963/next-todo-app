@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { auth } from "./components/firebase";
 import Layout from "./components/Layout";
 import {taskList, editList} from "./components/atom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   collection,
   deleteDoc,
@@ -16,8 +16,8 @@ import {
 import { db } from "./components/firebase";
 
 const Top = () => {
-  const [task, setTask] = useRecoilState<any>(taskList);
-  const [editTask, setEditTask] = useRecoilState<any>(editList);
+  const [task, setTask] = useRecoilState(taskList);
+  const setEditTask = useSetRecoilState(editList);
   const [isClient, setIsClient] = useState(false);
   const [filterTask, setFilterTask] = useState("");
   const router = useRouter();
@@ -25,9 +25,9 @@ const Top = () => {
   //firebaseからデータを取得しsetTaskで更新しtaskに格納(taskを監視)
   useEffect(() => {
     const postData = collection(db, "post");
-    getDocs(query(postData, orderBy("timeStamp", "desc"))).then((snapshot) => {
-      setTask(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    });
+    getDocs(query(postData, orderBy("timeStamp", "desc"))).then((snapshot: any) =>
+      setTask(snapshot.docs.map((doc: { id: string; data: () => any; }) => ({ id: doc.id, ...doc.data() })))
+    );
   }, [task]);
 
   //ReactDOM.hydrate()対策
@@ -67,30 +67,27 @@ const Top = () => {
   };
 
   //編集ページへデータを渡し遷移
-  const handleEdit = (
-    id: string,
-    key: string,
-    title: string,
-    createdAt: String,
-    detail: string,
-    category: string
-  ) => {
+  const handleEdit = ({ task }: any) => {
     setEditTask({
-      id,
-      key,
-      title,
-      createdAt,
-      detail,
-      category,
+      id: task.id,
+      key: task.key,
+      title: task.title,
+      createdAt: task.createdAt,
+      detail: task.detail,
+      category: task.category,
     });
-
     router.push("/Edit");
   };
 
   //詳細ページへデータを渡し遷移
-  const handleDetail = (detail: string) => {
+  const handleDetail = ({ task }: any) => {
     setEditTask({
-      detail,
+      id: task.id,
+      key: task.key,
+      title: task.title,
+      createdAt: task.createdAt,
+      detail: task.detail,
+      category: task.category,
     });
     router.push("/Detail");
   };
@@ -102,9 +99,11 @@ const Top = () => {
           <title>Top Page</title>
         </Head>
         <div className="h-full flex justify-end items-center mr-10">
-          {auth.currentUser && (
-            <p>ログイン名：{auth.currentUser?.displayName} </p>
-          )}
+          {/* {auth.currentUser  (
+            <p>ログイン名：{auth.currentUser.displayName ?? "ゲスト"} </p>
+          ) : (
+            <p>ログイン名：ゲスト </p>
+          )} */}
           <button
             className="text-xs w-1/8 m-4 bg-blue-400 hover:bg-blue-500 active:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleLogout}
@@ -123,7 +122,7 @@ const Top = () => {
           </div>
 
           <select
-            className="bg-gray-200 w-1/5 h-10 mt-4 mb-8 mx-16 container text-center rounded-lg border-solid outline-none"
+            className="bg-gray-200 w-1/5 h-10 mt-4 mb-8 mx-28 container text-center rounded-lg border-solid outline-none"
             onChange={(e) => handleFilter(e.target.value)}
           >
             <option value="全て">全て</option>
@@ -165,22 +164,13 @@ const Top = () => {
                       </td>
                       <td
                         className="m-4 text-white font-bold py-2 px-4 rounded cursor-pointer bg-sky-300 hover:bg-sky-500 active:bg-sky-700"
-                        onClick={() => handleDetail(task.detail)}
+                        onClick={() => handleDetail({ task })}
                       >
                         詳細
                       </td>
                       <td
                         className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                        onClick={() =>
-                          handleEdit(
-                            task.id,
-                            task.key,
-                            task.title,
-                            task.createdAt,
-                            task.detail,
-                            task.category
-                          )
-                        }
+                        onClick={() => handleEdit({ task })}
                       >
                         編集
                       </td>

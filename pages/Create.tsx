@@ -72,23 +72,24 @@ const Create = () => {
   //firebaseへデータ格納、Topへ送信処理
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const { key, title, createdAt, detail, category } = formValue;
     if (formValue.title === "") return;
     addDoc(collection(db, "post"), {
-      key: formValue.key,
-      title: formValue.title,
-      createdAt: formValue.createdAt,
-      detail: formValue.detail,
-      category: formValue.category,
+      key,
+      title,
+      createdAt,
+      detail,
+      category,
       timeStamp: serverTimestamp(),
     });
     setTask((task: Array<List>) => [
       ...task,
       {
-        key: formValue.key,
-        title: formValue.title,
-        createdAt: formValue.createdAt,
-        detail: formValue.detail,
-        category: formValue.category,
+        key,
+        title,
+        createdAt,
+        detail,
+        category,
       },
     ]);
     router.push("/Top");
@@ -107,7 +108,8 @@ const Create = () => {
       <Head>
         <title>Create Page</title>
       </Head>
-      <div className="mt-14  h-auto w-full mx-auto container bg-blue-200 flex justify-center items-start text-base rounded-lg">
+        <h1 className="text-center mt-10 bg-clip-text text-transparent bg-gradient-to-r from-gray-400 to-gray-300 text-xl">タスク登録</h1>
+      <div className="mt-4  h-auto w-full mx-auto container bg-blue-200 flex justify-center items-start text-base rounded-lg">
         <form
           className="flex flex-col w-full"
           onSubmit={(e) => handleSubmit(e)}

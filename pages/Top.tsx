@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { auth } from "./components/firebase";
 import Layout from "./components/Layout";
-import {taskList, editList} from "./components/atom";
+import { taskList, editItem } from "./components/atom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   collection,
@@ -15,9 +15,18 @@ import {
 } from "firebase/firestore";
 import { db } from "./components/firebase";
 
+type taskType = {
+  id: string;
+  key: string;
+  title: string;
+  createdAt: string;
+  detail: string;
+  category: "未着手" | "進行中" | "完了";
+};
+
 const Top = () => {
   const [task, setTask] = useRecoilState(taskList);
-  const setEditTask = useSetRecoilState(editList);
+  const setEditTask = useSetRecoilState(editItem);
   const [isClient, setIsClient] = useState(false);
   const [filterTask, setFilterTask] = useState("");
   const router = useRouter();
@@ -25,10 +34,15 @@ const Top = () => {
   //firebaseからデータを取得しsetTaskで更新しtaskに格納(taskを監視)
   useEffect(() => {
     const postData = collection(db, "post");
-    getDocs(query(postData, orderBy("timeStamp", "desc"))).then((snapshot: any) =>
-      setTask(snapshot.docs.map((doc: { id: string; data: () => any; }) => ({ id: doc.id, ...doc.data() })))
+    getDocs(query(postData, orderBy("timeStamp", "desc"))).then((snapshot) =>
+      setTask(
+        snapshot.docs.map((doc: { id: string; data: () => any }) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+      )
     );
-  }, [task]);
+  }, []);
 
   //ReactDOM.hydrate()対策
   useEffect(() => {
@@ -67,27 +81,29 @@ const Top = () => {
   };
 
   //編集ページへデータを渡し遷移
-  const handleEdit = ({ task }: any) => {
+  const handleEdit = (task: taskType) => {
+    const { id, key, title, createdAt, detail, category } = task;
     setEditTask({
-      id: task.id,
-      key: task.key,
-      title: task.title,
-      createdAt: task.createdAt,
-      detail: task.detail,
-      category: task.category,
+      id,
+      key,
+      title,
+      createdAt,
+      detail,
+      category,
     });
     router.push("/Edit");
   };
 
   //詳細ページへデータを渡し遷移
-  const handleDetail = ({ task }: any) => {
+  const handleDetail = (task: taskType) => {
+    const { id, key, title, createdAt, detail, category } = task;
     setEditTask({
-      id: task.id,
-      key: task.key,
-      title: task.title,
-      createdAt: task.createdAt,
-      detail: task.detail,
-      category: task.category,
+      id,
+      key,
+      title,
+      createdAt,
+      detail,
+      category,
     });
     router.push("/Detail");
   };
@@ -99,11 +115,10 @@ const Top = () => {
           <title>Top Page</title>
         </Head>
         <div className="h-full flex justify-end items-center mr-10">
-          {/* {auth.currentUser  (
-            <p>ログイン名：{auth.currentUser.displayName ?? "ゲスト"} </p>
-          ) : (
-            <p>ログイン名：ゲスト </p>
-          )} */}
+          {auth.currentUser && (
+            <p>ログイン名：{auth.currentUser?.displayName ?? "ゲスト"} </p>
+          )}
+
           <button
             className="text-xs w-1/8 m-4 bg-blue-400 hover:bg-blue-500 active:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleLogout}
@@ -145,7 +160,7 @@ const Top = () => {
 
             {isClient && (
               <tbody>
-                {task.map((task: any) => {
+                {task.map((task) => {
                   if (filterTask === "未着手" && task.category !== "未着手")
                     return;
                   if (filterTask === "進行中" && task.category !== "進行中")
@@ -164,13 +179,13 @@ const Top = () => {
                       </td>
                       <td
                         className="m-4 text-white font-bold py-2 px-4 rounded cursor-pointer bg-sky-300 hover:bg-sky-500 active:bg-sky-700"
-                        onClick={() => handleDetail({ task })}
+                        onClick={() => handleDetail(task)}
                       >
                         詳細
                       </td>
                       <td
                         className="m-4 bg-green-300 hover:bg-green-400 active:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                        onClick={() => handleEdit({ task })}
+                        onClick={() => handleEdit(task)}
                       >
                         編集
                       </td>

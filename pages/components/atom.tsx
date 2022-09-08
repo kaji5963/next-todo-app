@@ -21,7 +21,7 @@ export const taskList: RecoilState<taskType[]> = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const editList: RecoilState<taskType> = atom({
+export const editItem: RecoilState<taskType> = atom({
   key: "edit",
   default: {},
   effects_UNSTABLE: [persistAtom],

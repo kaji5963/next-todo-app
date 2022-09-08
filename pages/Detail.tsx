@@ -1,11 +1,11 @@
 import Head from "next/head";
 import Layout from "./components/Layout";
-import { editList } from "./components/atom";
+import { editItem } from "./components/atom";
 import { useRecoilValue } from "recoil";
 import { useRouter } from "next/router";
 
 const Detail = () => {
-  const editTask = useRecoilValue<any>(editList);
+  const editTask = useRecoilValue(editItem);
   const router = useRouter();
 
   return (

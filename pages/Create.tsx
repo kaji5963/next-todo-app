@@ -1,28 +1,24 @@
 import Layout from "./components/Layout";
 import Head from "next/head";
 import {taskList} from "./components/atom";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { useRouter } from "next/router";
 // import { useForm, SubmitHandler } from "react-hook-form";
-import { db } from "./components/firebase"
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { db } from "./components/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 import { format } from "date-fns";
 
 //コメントアウト部分はuseFormのコード、formやバリデーションは上手く機能したがfirebaseと連携できず、再度チャレンジするため残しておく
 
 //formのデータの型
-type List = {
-  key: string;
-  title: string;
-  createdAt: string;
-  detail: string;
-  category: string;
-};
+// type List = {
+//   key: string;
+//   title: string;
+//   createdAt: string;
+//   detail: string;
+//   category: "未着手" | "進行中" | "完了";
+// };
 
 // type FormData = {
 //   title: string;
@@ -32,14 +28,14 @@ type List = {
 // };
 
 const Create = () => {
-  const [formValue, setFormValue] = useState<List>({
+  const [formValue, setFormValue] = useState({
     key: Math.floor(Math.random() * 1000).toString(16),
     title: "",
     createdAt: format(new Date(), "yyyy/MM/dd"),
     detail: "",
     category: "未着手",
   });
-  const [task, setTask] = useRecoilState<any>(taskList);
+  const setTask = useSetRecoilState(taskList);
   const router = useRouter();
 
   //useForm処理
@@ -82,7 +78,8 @@ const Create = () => {
       category,
       timeStamp: serverTimestamp(),
     });
-    setTask((task: Array<List>) => [
+
+    setTask((task: any) => [
       ...task,
       {
         key,
@@ -108,7 +105,9 @@ const Create = () => {
       <Head>
         <title>Create Page</title>
       </Head>
-        <h1 className="text-center mt-10 bg-clip-text text-transparent bg-gradient-to-r from-gray-400 to-gray-300 text-xl">タスク登録</h1>
+      <h1 className="text-center mt-10 bg-clip-text text-transparent bg-gradient-to-r from-gray-400 to-gray-300 text-xl">
+        タスク登録
+      </h1>
       <div className="mt-4  h-auto w-full mx-auto container bg-blue-200 flex justify-center items-start text-base rounded-lg">
         <form
           className="flex flex-col w-full"
